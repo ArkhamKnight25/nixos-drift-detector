@@ -27,6 +27,8 @@ def diff_services(
         svc_type = decl_info.get("type", "simple")
 
         if svc_name not in actual:
+            if _is_conditional_service(svc_name, decl_info) or svc_type == "oneshot":
+                continue
             entries.append(DriftEntry(
                 type="service",
                 name=svc_name,
@@ -44,6 +46,9 @@ def diff_services(
         sub_state = actual_info.get("sub_state", "unknown")
 
         if svc_type == "oneshot" and active_state == "inactive" and sub_state == "dead":
+            continue
+
+        if _is_conditional_service(svc_name, decl_info) and active_state != "active":
             continue
 
         if active_state not in ("active", "activating", "reloading"):
@@ -97,3 +102,16 @@ def _is_transient_target(wanted_by: str) -> bool:
         return False
     targets = {t.strip() for t in wanted_by.split() if t.strip()}
     return bool(targets) and targets.issubset(_TRANSIENT_TARGETS)
+
+
+_CONDITIONAL_SERVICE_PATTERNS = (
+    "lvm-", "debug-shell", "dbus-org.", "hv-", "xen-",
+    "virtio-", "vsock-", "vmtoolsd", "open-vm-tools", "cloud-init",
+)
+
+
+def _is_conditional_service(name: str, decl_info: dict) -> bool:
+    for pattern in _CONDITIONAL_SERVICE_PATTERNS:
+        if name.startswith(pattern) or pattern in name:
+            return True
+    return False
