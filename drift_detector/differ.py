@@ -20,7 +20,7 @@ def diff_services(
         if svc_name.endswith("@.service"):
             continue
 
-        wanted_by = decl_info.get("wanted_by", "")
+        wanted_by = decl_info.get("wanted_by") or ""
         if _is_transient_target(wanted_by):
             continue
 
