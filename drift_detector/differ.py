@@ -48,6 +48,10 @@ def diff_services(
         if svc_type == "oneshot" and active_state == "inactive" and sub_state == "dead":
             continue
 
+        exec_start = decl_info.get("exec_start", "")
+        if exec_start.startswith(("@", "@@")) and active_state in ("inactive", "activating"):
+            continue
+
         if _is_conditional_service(svc_name, decl_info) and active_state != "active":
             continue
 
