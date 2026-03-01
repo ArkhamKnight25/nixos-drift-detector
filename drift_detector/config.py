@@ -1,28 +1,28 @@
-from pathlib import Path
+from __future__ import annotations
 
-CURRENT_SYSTEM = Path("/run/current-system")
-SYSTEMD_UNIT_DIR = CURRENT_SYSTEM / "etc" / "systemd" / "system"
-DECLARATIVE_USERS_FILE = Path("/var/lib/nixos/declarative-users")
-DECLARATIVE_GROUPS_FILE = Path("/var/lib/nixos/declarative-groups")
-REPORT_VERSION = "1.0.0"
-
-SYSTEM_SERVICE_PREFIXES = (
-    "systemd-",
-    "dbus",
-    "getty",
-    "user@",
-    "session-",
-    "-.service",
-    "init.scope",
-)
+SYSTEM_PROFILE = "/run/current-system"
 
 ALWAYS_PRESENT_SERVICES = {
     "dbus.service",
     "systemd-journald.service",
     "systemd-logind.service",
     "systemd-udevd.service",
-    "systemd-networkd.service",
     "systemd-resolved.service",
     "systemd-timesyncd.service",
+    "sshd.service",
     "nix-daemon.service",
+    "network.target",
+    "getty@tty1.service",
 }
+
+SYSTEM_SERVICE_PREFIXES = (
+    "systemd-",
+    "dbus-",
+    "kmod-",
+    "user@",
+    "session-",
+    "user-runtime-dir@",
+    "getty@",
+    "autovt@",
+    "serial-getty@",
+)
