@@ -41,5 +41,35 @@ systemctl start nginx
 sleep 1
 echo
 
+# test 3: undeclared persistent service -> new warning
+echo "test 3: rogue service"
+systemd-run --unit=drift-test-rogue.service --description="drift detector rogue test" "$(which sleep)" 3600
+sleep 1
+warn=$(detect | jq -r '.summary.warning')
+if [[ "$warn" -gt "$base_warn" ]]; then
+    echo "  ok (warn $base_warn -> $warn)"
+    PASS=$((PASS + 1))
+else
+    echo "  fail (warn unchanged at $warn)"
+    FAIL=$((FAIL + 1))
+fi
+systemctl stop drift-test-rogue.service
+sleep 1
+echo
+
+# test 4: after cleanup counts return to baseline
+echo "test 4: cleanup"
+snap=$(detect)
+crit=$(echo "$snap" | jq -r '.summary.critical')
+warn=$(echo "$snap" | jq -r '.summary.warning')
+if [[ "$crit" -eq "$base_crit" && "$warn" -eq "$base_warn" ]]; then
+    echo "  ok (crit=$crit warn=$warn)"
+    PASS=$((PASS + 1))
+else
+    echo "  fail (got crit=$crit warn=$warn, expected crit=$base_crit warn=$base_warn)"
+    FAIL=$((FAIL + 1))
+fi
+echo
+
 echo "results: $PASS passed, $FAIL failed"
 [[ "$FAIL" -eq 0 ]]
