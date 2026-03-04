@@ -16,7 +16,19 @@ nixos-drift-detect --check services
 ## Install
 
 ```bash
-# From source (on NixOS use a venv — --break-system-packages won't work)
+# via nix (recommended)
+nix run github:ArkhamKnight25/nixos-drift-detector
+
+# or build locally
+git clone https://github.com/ArkhamKnight25/nixos-drift-detector
+cd nixos-drift-detector
+nix build
+./result/bin/nixos-drift-detect --help
+```
+
+Or with a venv if you're not using the flake:
+
+```bash
 git clone https://github.com/ArkhamKnight25/nixos-drift-detector
 cd nixos-drift-detector
 nix-shell -p python3 jq
@@ -24,8 +36,6 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -e .
 ```
-
-Nix flake packaging is planned but not done yet.
 
 ## Usage
 
@@ -83,4 +93,3 @@ rogue service shows as warning, cleanup returns to baseline.
   what the current profile declares
 - reconciliation mode — suggest or apply fixes
 - NixOS VM tests via `nixosTest`
-- flake + NixOS module for proper packaging
