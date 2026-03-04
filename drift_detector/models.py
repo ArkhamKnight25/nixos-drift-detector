@@ -7,6 +7,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from drift_detector import __version__
+
 
 _SEVERITY_ORDER = {"info": 0, "warning": 1, "critical": 2}
 
@@ -49,7 +51,7 @@ class DriftReport:
     @classmethod
     def create(cls, checks_run: list[str], profile_path: Path) -> DriftReport:
         return cls(
-            version="1.0.0",
+            version=__version__,
             timestamp=datetime.now(timezone.utc).isoformat(),
             system_profile=str(profile_path.resolve()) if profile_path.exists() else str(profile_path),
             hostname=socket.gethostname(),
