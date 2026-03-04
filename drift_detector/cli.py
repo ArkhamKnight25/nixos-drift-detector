@@ -98,12 +98,6 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         profile = get_current_profile(profile_path)
-    except FileNotFoundError:
-        logger.error("Profile not found at %s — is this a NixOS system?", profile_path)
-        return 1
-    except PermissionError:
-        logger.error("Permission denied reading %s — try running with sudo", profile_path)
-        return 1
     except RuntimeError as e:
         logger.error("%s", e)
         return 1
@@ -127,10 +121,12 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(to_console(report, min_severity))
 
-    summary = report.summary
-    if summary["critical"] > 0:
+    filtered = report.filter_by_severity(min_severity)
+    filtered_critical = sum(1 for d in filtered if d.severity == Severity.CRITICAL)
+    filtered_warning = sum(1 for d in filtered if d.severity == Severity.WARNING)
+    if filtered_critical > 0:
         return 2
-    if summary["warning"] > 0:
+    if filtered_warning > 0:
         return 1
     return 0
 

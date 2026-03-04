@@ -22,13 +22,19 @@ def _severity_color(severity: Severity) -> str:
 
 def to_json(report: DriftReport, min_severity: Severity = Severity.INFO) -> str:
     drifts = report.filter_by_severity(min_severity)
+    summary = {
+        "total_drifts": len(drifts),
+        "critical": sum(1 for d in drifts if d.severity == Severity.CRITICAL),
+        "warning": sum(1 for d in drifts if d.severity == Severity.WARNING),
+        "info": sum(1 for d in drifts if d.severity == Severity.INFO),
+    }
     data = {
         "version": report.version,
         "timestamp": report.timestamp,
         "system_profile": report.system_profile,
         "hostname": report.hostname,
         "checks_run": report.checks_run,
-        "summary": report.summary,
+        "summary": summary,
         "drifts": [d.to_dict() for d in drifts],
     }
     return json.dumps(data, indent=2)
