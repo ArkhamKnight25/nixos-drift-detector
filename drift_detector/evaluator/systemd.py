@@ -44,7 +44,7 @@ def get_declared_services(profile: Path) -> dict[str, dict]:
         except Exception as e:
             info = {"unit_file": str(unit_file), "parse_error": str(e)}
 
-        if info.get("wanted_by", ""):
+        if info.get("wanted_by") or info.get("required_by"):
             declared[name] = info
 
     return declared
