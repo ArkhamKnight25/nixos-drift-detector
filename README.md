@@ -30,15 +30,32 @@ Nix flake packaging is planned but not done yet.
 ## Usage
 
 ```
---check services     check systemd service state
---format json        output JSON instead of console
---output FILE        write JSON report to file
---severity LEVEL     info | warning | critical
---profile PATH       override /run/current-system
---verbose            debug logging
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --check SUBSYSTEM     subsystems to check: services (default: all available)
+  --output FILE, -o FILE
+                        write JSON report to FILE
+  --format {json,console,both}
+                        terminal output format (default: both)
+  --severity {info,warning,critical}
+                        minimum severity to include (default: info)
+  --profile PATH        override /run/current-system path
+  --verbose, -v         enable debug logging
 ```
 
 Exit codes: `0` clean, `1` warnings, `2` critical drift.
+
+### Commands
+
+```bash
+nixos-drift-detect --help
+nixos-drift-detect --check services
+nixos-drift-detect --check services --format json | jq '.summary'
+nixos-drift-detect --check services --output /tmp/report.json
+nixos-drift-detect --check services --severity critical
+nixos-drift-detect --check services --verbose
+nixos-drift-detect --check services --profile /nix/store/abc...-nixos-system
+```
 
 ## How it works
 
