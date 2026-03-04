@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-SYSTEM_PROFILE = "/run/current-system"
+from pathlib import Path
+
+CURRENT_SYSTEM = Path("/run/current-system")
 
 ALWAYS_PRESENT_SERVICES = {
     "dbus.service",
